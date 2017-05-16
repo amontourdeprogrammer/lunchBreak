@@ -18,8 +18,12 @@ app.set('port', port);
 /**
  * Create HTTP server.
  */
-
 var server = http.createServer(app);
+
+var io = require('socket.io')(server);
+
+app.setIo(io);
+console.log('Server is now running')
 
 /**
  * Listen on provided port, on all network interfaces.
