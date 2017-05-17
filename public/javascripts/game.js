@@ -23,8 +23,12 @@ function create (){
   map = game.add.tilemap();
   map.addTilesetImage('ressources');
   layer_background = map.create('space_backgrounds', 40, 30, 32, 32);
-  map.putTile(0,24,0, layer_background);
-  map.putTile(1,2,3, layer_background);
+
+  for (var i = 0; i < 16; i++){
+    var x = game.rnd.integerInRange(0, 24)
+    var y = game.rnd.integerInRange(0, 18)
+    map.putTile(i, x ,y, layer_background);
+}
 
   game.stage.backgroundColor = '#D1EDEC';
   text = game.add.text(64, 362, "no user" , 16);
