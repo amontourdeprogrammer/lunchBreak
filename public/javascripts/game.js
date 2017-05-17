@@ -12,22 +12,20 @@ socket.on('game state change', function (newGameState) {
 
 function preload () {
   game.load.image('logo', 'images/logo.png');
-  game.load.spritesheet('ressources', 'images/ressources.png', 228, 228);
+  game.load.spritesheet('ressources', 'images/ressources.png', 32, 32);
 }
 
 function create (){
-  game.stage.backgroundColor = '#D9F0F0';
+  map = game.add.tilemap();
+  map.addTilesetImage('ressources');
+  layer_background = map.create('space_backgrounds', 40, 30, 32, 32);
+  map.putTile(0,24,0, layer_background);
+  map.putTile(1,2,3, layer_background);
+
+  game.stage.backgroundColor = '#D1EDEC';
   text = game.add.text(64, 362, "no user" , 16);
-  placeOne(100, 100, 1)
 }
 
 function update () {
   text.text = "Players : " + gameState.players;
 }
-
-function placeOne(x, y, frame) {
-  var ressource = game.add.sprite(x, y, 'ressources', frame);
-  ressource.anchor.setTo(0.5, 0.5);
-  ressource.scale.setTo(0.5, 0.5);
-}
-
