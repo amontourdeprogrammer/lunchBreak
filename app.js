@@ -43,14 +43,19 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+var gameState = {
+  players: 0
+};
+
 app.setIo = function(io) {
   console.log('set.io running');
   io.on('connection', function(socket){
-    var clientId = 1000 * Math.random();
-    console.log("user connected ", clientId);
-    socket.on('hello', function(info){
-      console.log('info = ', info);
-      socket.emit('hello', "Coucou c'est moi ?");
+    gameState.players += 1;
+    io.emit('game state change', gameState);
+
+    socket.on('disconnect', function(socket){
+      gameState.players -= 1;
+      io.emit('game state change', gameState);
     });
   });
 };
