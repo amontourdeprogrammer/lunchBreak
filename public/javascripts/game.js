@@ -6,6 +6,8 @@ var player;
 const max_x = 800;
 const max_y = 600;
 
+var playerMapClient = {};
+
 window.onload = function() {
   game = new Phaser.Game(max_x, max_y, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 };
@@ -37,8 +39,9 @@ function create (){
   var x = Math.floor(Math.random() * (max_x-100)) + 50;
   var y = Math.floor(Math.random() * (max_y-100)) + 50;
   placeCharacter(x,y);
-
-}
+  userID = Math.random() * 1000;
+  socket.emit("new user",{userObj:userID, xObj:x, yObj:y});
+ }
 
 function update () {
   text.text = "Players : " + gameState.players;
