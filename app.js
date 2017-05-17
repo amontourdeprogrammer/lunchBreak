@@ -12,7 +12,7 @@ var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'pug');
+app.set('view engine', 'hbs');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -42,5 +42,22 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+var gameState = {
+  players: 0
+};
+
+app.setIo = function(io) {
+  console.log('set.io running');
+  io.on('connection', function(socket){
+    gameState.players += 1;
+    io.emit('game state change', gameState);
+
+    socket.on('disconnect', function(socket){
+      gameState.players -= 1;
+      io.emit('game state change', gameState);
+    });
+  });
+};
 
 module.exports = app;
