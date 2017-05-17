@@ -11,14 +11,15 @@ socket.on('game state change', function (newGameState) {
 });
 
 function preload () {
-  game.load.image('logo', 'images/logo.png');
+  game.load.image('player', 'images/logo.png');
   game.load.spritesheet('ressources', 'images/ressources.png', 228, 228);
 }
 
 function create (){
   game.stage.backgroundColor = '#D9F0F0';
   text = game.add.text(64, 362, "no user" , 16);
-  placeOne(100, 100, 1)
+  placeOne(100, 100, 1);
+  placeCharacter(400,100);
 }
 
 function update () {
@@ -31,3 +32,8 @@ function placeOne(x, y, frame) {
   ressource.scale.setTo(0.5, 0.5);
 }
 
+function placeCharacter(x, y) {
+  var player = game.add.sprite(x, y, 'player');
+  player.anchor.setTo(0.5, 0.5);
+  player.scale.setTo(0.2, 0.2);
+}
