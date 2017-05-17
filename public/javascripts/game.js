@@ -3,9 +3,11 @@ var game = {};
 var gameState = {players: 1};
 
 var player;
+const max_x = 800;
+const max_y = 600;
 
 window.onload = function() {
-  game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+  game = new Phaser.Game(max_x, max_y, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 };
 
 socket.on('game state change', function (newGameState) {
@@ -20,9 +22,12 @@ function preload () {
 function create (){
   game.stage.backgroundColor = '#D9F0F0';
   text = game.add.text(64, 362, "no user" , 16);
-  placeOne(100, 100, 1);
-  placeCharacter(400,100);
   cursors = game.input.keyboard.createCursorKeys();
+  placeOne(100, 100, 1);
+  var x = Math.floor(Math.random() * (max_x-100)) + 50;
+  var y = Math.floor(Math.random() * (max_y-100)) + 50;
+  placeCharacter(x,y);
+  
 }
 
 function update () {
