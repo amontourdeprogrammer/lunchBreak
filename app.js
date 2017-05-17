@@ -46,12 +46,13 @@ app.use(function(err, req, res, next) {
 app.setIo = function(io) {
   console.log('set.io running');
   io.on('connection', function(socket){
-    var clientId = 1000*Math.random();
+    var clientId = 1000 * Math.random();
+    console.log("user connected ", clientId);
     socket.on('hello', function(info){
-     console.log('info='+info);
-     });
+      console.log('info = ', info);
+      socket.emit('hello', "Coucou c'est moi ?");
+    });
   });
 };
-
 
 module.exports = app;

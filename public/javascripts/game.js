@@ -3,6 +3,9 @@ var socket = io();
 window.onload = function() {
 
   socket.emit('hello','Hello world');
+  socket.on('hello', function (message) {
+    console.log(message);
+  });
 
   var game = new Phaser.Game(800, 600, Phaser.AUTO, '',
       { preload: preload, create: create });
