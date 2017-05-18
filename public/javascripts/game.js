@@ -17,8 +17,8 @@ socket.on('game state change', function (newGameState) {
 });
 
 function preload () {
-  game.load.image('player', 'images/logo.png');
   game.load.spritesheet('ressources', 'images/ressources.png', 32, 32);
+  game.load.image('tiles', '/images/tile.png');
 }
 
 function create (){
@@ -30,6 +30,16 @@ function create (){
     var x = game.rnd.integerInRange(0, 24)
     var y = game.rnd.integerInRange(0, 18)
     map.putTile(i, x ,y, layer_background);
+
+  map.addTilesetImage('tiles');
+  layer_walls = map.create('space_walls', 40, 30, 32, 32);
+
+  drawWall(10, 10, 'vertical', 3, layer_walls);
+  drawWall(3, 0, 'horizontal', 7, layer_walls);
+
+  game.stage.backgroundColor = '#D9F0F0';
+  text = game.add.text(64, 362, "no user" , 16);
+  placeOne(100, 100, 1)
 }
 
   game.stage.backgroundColor = '#D1EDEC';
@@ -76,5 +86,12 @@ function moveCharacter() {
   else if (cursors.down.isDown)
   {
       player.body.velocity.y = 200;
+  }
+}
+
+function drawWall(x, y, direction, tilelength, layer) {
+  for(i=0; i<tilelength; i++) {
+    if(direction==='horizontal') { map.putTile(0, x, y + i, layer); }
+    else if(direction==='vertical') { map.putTile(0, x + i, y, layer); }
   }
 }
