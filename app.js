@@ -44,7 +44,8 @@ app.use(function(err, req, res, next) {
 });
 
 var gameState = {
-  players: 0
+  players: 0,
+  playerMap: []
 };
 
 app.setIo = function(io) {
@@ -52,6 +53,12 @@ app.setIo = function(io) {
   io.on('connection', function(socket){
     gameState.players += 1;
     io.emit('game state change', gameState);
+    
+    socket.on("new user", function(userInfo){
+      console.log("user info: ", userInfo);
+      gameState.playerMap.push(userInfo);
+      console.log(gameState.playerMap);
+    });
 
     socket.on('disconnect', function(socket){
       gameState.players -= 1;
