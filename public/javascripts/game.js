@@ -56,7 +56,7 @@ function update () {
 
   text.text = "Players : " + gameState.players;
   moveCharacter();
-  placeCharacters()
+  placeMonsters()
 
   if (endGame.end.isDown){
     socket.emit("Client : end the game", 0);
@@ -111,12 +111,17 @@ function moveCharacter() {
 
 
 
-function placeCharacters(){
-  listOfCharac = {hello:[334, 267]}
-  listxy = listOfCharac.hello
-  monster = game.add.sprite(listxy[0], listxy[1], 'monster');
-  monster.anchor.setTo(0.5, 0.5);
-  monster.scale.setTo(0.2, 0.2);
+function placeMonsters(){
+  listOfCharac = {hello:[334, 267], hello2:[434, 367]}
+  for(i in listOfCharac){
+    console.log(listOfCharac[i])
+    listxy = listOfCharac[i]
+    monster = game.add.sprite(listxy[0], listxy[1], 'monster');
+    monster.anchor.setTo(0.5, 0.5);
+    monster.scale.setTo(0.2, 0.2);
+  }
+  
+  
 }
 
 function placeWalls(game) {
