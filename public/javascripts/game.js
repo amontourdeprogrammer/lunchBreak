@@ -7,6 +7,14 @@ const max_x = 800;
 const max_y = 600;
 
 var playerMapClient = {};
+var wallTiles = [];
+var gameTiles = [];
+for(x=0; x<25; x++) {
+  for(y=0; y<19; y++) {
+    gameTiles.push({ "x": x, "y": y });
+  }
+}
+var vacantTiles = [];
 
 window.onload = function() {
   game = new Phaser.Game(max_x, max_y, Phaser.AUTO, '', { preload: preload, create: create, update: update });
@@ -93,23 +101,40 @@ function placeWall(x, y, direction, tileLength, layer) {
   if(direction==='vertical') {
     for(i=0; i<tileLength; i++) {
       wallsMap.putTile(0, x, y + i, layer);
+      wallTiles.push({ "x": x, "y": y+i });
     }
   } else if(direction==='horizontal') {
     for(i=0; i<tileLength; i++) {
       wallsMap.putTile(0, x + i, y, layer);
+      wallTiles.push({ "x": x + i, "y": y });
     }
   }
 }
 
 function placeRessources(game) {
+
+  getVacantTiles(game);
+
   ressourcesMap = game.add.tilemap();
   ressourcesMap.addTilesetImage('ressources');
 
   ressourcesLayer = ressourcesMap.create('space_backgrounds', 40, 30, 32, 32);
 
   for (var i = 0; i < 16; i++){
-    var x = game.rnd.integerInRange(0, 24)
-      var y = game.rnd.integerInRange(0, 18)
-      ressourcesMap.putTile(i, x ,y, ressourcesLayer);
+    var tilePosition = vacantTiles[game.rnd.integerInRange(0, vacantTiles.length-1)];
+    ressourcesMap.putTile(i, tilePosition["x"] ,tilePosition["y"], ressourcesLayer);
   }
+}
+
+function getVacantTiles(game) {
+  for(tileNumber=0; tileNumber< gameTiles.length; tileNumber++) {
+    if(!tileInArray(gameTiles[tileNumber], wallTiles)) { vacantTiles.push(gameTiles[tileNumber]); }
+  }
+}
+
+function tileInArray(tile, array) {
+  for(i=0; i<array.length; i++) {
+    if(tile["x"] == array[i]["x"] && tile["y"] == array[i]["y"]) { return true; }
+  }
+  return false;
 }
