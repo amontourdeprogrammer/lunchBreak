@@ -60,6 +60,11 @@ app.setIo = function(io) {
       console.log(gameState.playerMap);
     });
 
+    socket.on("Client : end the game", function(content){
+
+      endOfGame(io)
+    });
+
     socket.on('disconnect', function(socket){
       gameState.players -= 1;
       io.emit('game state change', gameState);
@@ -68,3 +73,8 @@ app.setIo = function(io) {
 };
 
 module.exports = app;
+
+function endOfGame(io){
+
+    io.emit('end of game', 1)
+}

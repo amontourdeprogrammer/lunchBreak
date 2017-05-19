@@ -1,6 +1,6 @@
 var socket = io();
 var game = {};
-var gameState = {players: 1};
+var gameState = {players: 1, game:true};
 
 var player;
 const max_x = 800;
@@ -14,6 +14,10 @@ window.onload = function() {
 
 socket.on('game state change', function (newGameState) {
   gameState = newGameState;
+});
+socket.on('end of game', function (newGameState) {
+  gameState.game = false;
+  game.destroy()
 });
 
 function preload () {
@@ -31,6 +35,8 @@ function create (){
   text = game.add.text(64, 362, "no user" , 16);
 
   cursors = game.input.keyboard.createCursorKeys();
+  endGame = game.input.keyboard.addKeys( { 'end': Phaser.KeyCode.T} );
+  console.log(endGame)
   var x = Math.floor(Math.random() * (max_x-100)) + 50;
   var y = Math.floor(Math.random() * (max_y-100)) + 50;
   placeCharacter(x,y);
@@ -41,6 +47,10 @@ function create (){
 function update () {
   text.text = "Players : " + gameState.players;
   moveCharacter();
+
+  if (endGame.end.isDown){
+    socket.emit("Client : end the game", 0);
+  }
 }
 
 function placeCharacter(x, y) {
@@ -113,3 +123,5 @@ function placeRessources(game) {
       ressourcesMap.putTile(i, x ,y, ressourcesLayer);
   }
 }
+
+
