@@ -1,8 +1,14 @@
 var socket = io();
 var game = {};
-var gameState = {players: 1};
+var gameState = {
+  players: 1,
+  playerMap: [],
+  ressources: [],
+  game:true
+};
 
 var player;
+var userID;
 const max_x = 800;
 const max_y = 600;
 
@@ -21,6 +27,7 @@ function preload () {
   game.load.spritesheet('ressources', 'images/ressources.png', 32, 32);
   game.load.image('tiles', '/images/tile.png');
   game.load.image('player', '/images/logo.png');
+  game.load.image('monster', '/images/monster.jpg');
 }
 
 function create (){
@@ -32,16 +39,28 @@ function create (){
   text = game.add.text(64, 362, "no user" , 16);
 
   cursors = game.input.keyboard.createCursorKeys();
+  endGame = game.input.keyboard.addKeys( { 'end': Phaser.KeyCode.T} );
+
   var x = Math.floor(Math.random() * (max_x-100)) + 50;
   var y = Math.floor(Math.random() * (max_y-100)) + 50;
+  
   placeCharacter(x,y);
-  userID = Math.random() * 1000;
+  userID = Math.floor(Math.random());
   socket.emit("new user",{userObj:userID, xObj:x, yObj:y});
 }
 
 function update () {
+  if(gameState.game == false){
+    game.destroy();
+  };
+
   text.text = "Players : " + gameState.players;
   moveCharacter();
+  placeCharacters()
+
+  if (endGame.end.isDown){
+    socket.emit("Client : end the game", 0);
+  }
 }
 
 function placeCharacter(x, y) {
@@ -56,23 +75,48 @@ function moveCharacter() {
   player.body.velocity.x = 0;
   player.body.velocity.y = 0;
 
-  if (cursors.left.isDown)
-  {
-    player.body.velocity.x = -200;
+  if (cursors.left.isDown) { 
+    if (player.body.x > 0) {
+      player.body.velocity.x = -200;
+    } else {
+      player.body.velocity.x = 0;
+    }
   }
-  else if (cursors.right.isDown)
-  {
-    player.body.velocity.x = 200;
+  else if (cursors.right.isDown) {
+    if (player.body.x < max_x-80) {
+      player.body.velocity.x = 200;
+    } else {
+      player.body.velocity.x = 0;
+    }
   }
 
-  if (cursors.up.isDown)
-  {
-    player.body.velocity.y = -200;
+  if (cursors.up.isDown) {
+    if (player.body.y > 0){ 
+      player.body.velocity.y = -200;
+    } else {
+      player.body.velocity.y = 0;
+    }
   }
-  else if (cursors.down.isDown)
-  {
-    player.body.velocity.y = 200;
+  else if (cursors.down.isDown) {
+    if (player.body.y < max_y-80){
+      player.body.velocity.y = 200;
+    } else {
+      player.body.velocity.y = 0;
+    }
   }
+
+}
+ 
+
+
+
+
+function placeCharacters(){
+  listOfCharac = {hello:[334, 267]}
+  listxy = listOfCharac.hello
+  monster = game.add.sprite(listxy[0], listxy[1], 'monster');
+  monster.anchor.setTo(0.5, 0.5);
+  monster.scale.setTo(0.2, 0.2);
 }
 
 function placeWalls(game) {
@@ -113,3 +157,5 @@ function placeRessources(game) {
 
   });
 }
+
+

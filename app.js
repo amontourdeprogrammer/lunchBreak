@@ -44,11 +44,11 @@ app.use(function(err, req, res, next) {
 });
 
 
-
 var gameState = {
   players: 0,
   playerMap: [],
-  ressources: []
+  ressources: [],
+  game : true
 };
 
 for (var i = 0; i < 16; i++) {
@@ -65,18 +65,32 @@ app.setIo = function(io) {
   io.on('connection', function(socket){
     gameState.players += 1;
     io.emit('game state change', gameState);
-
+    console.log("game state player" + JSON.stringify(gameState));
     socket.on("new user", function(userInfo){
       console.log("user info: ", userInfo);
       gameState.playerMap.push(userInfo);
       console.log(gameState.playerMap);
     });
 
+    socket.on("Client : end the game", function(content){
+
+      endOfGame(io)
+    });
+
     socket.on('disconnect', function(socket){
       gameState.players -= 1;
       io.emit('game state change', gameState);
+      if (gameState.players == 0){
+          gameState.game = true;
+          console.log("game state at true")
+      };
     });
   });
 };
 
 module.exports = app;
+
+function endOfGame(io){
+    gameState.game = false
+    io.emit('game state change', gameState)
+}
