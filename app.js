@@ -93,4 +93,5 @@ module.exports = app;
 function endOfGame(io){
     gameState.game = false
     io.emit('game state change', gameState)
+    gameState.game = true
 }
