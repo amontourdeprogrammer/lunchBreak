@@ -14,6 +14,7 @@ window.onload = function() {
 
 socket.on('game state change', function (newGameState) {
   gameState = newGameState;
+  console.log(gameState);
 });
 socket.on('end of game', function (newGameState) {
   gameState.game = false;
@@ -117,11 +118,10 @@ function placeRessources(game) {
 
   ressourcesLayer = ressourcesMap.create('space_backgrounds', 40, 30, 32, 32);
 
-  for (var i = 0; i < 16; i++){
-    var x = game.rnd.integerInRange(0, 24)
-      var y = game.rnd.integerInRange(0, 18)
-      ressourcesMap.putTile(i, x ,y, ressourcesLayer);
-  }
+  gameState.ressources.forEach(function (ressource) {
+    ressourcesMap.putTile(ressource.frame, ressource.x ,ressource.y, ressourcesLayer);
+
+  });
 }
 
 

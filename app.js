@@ -43,17 +43,27 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+
+
 var gameState = {
   players: 0,
-  playerMap: []
+  playerMap: [],
+  ressources: []
 };
+
+var ressource1 = {
+  x: Math.floor(Math.random() * 24),
+  y: Math.floor(Math.random() * 18),
+  frame: Math.floor(Math.random() * 15)
+};
+gameState.ressources.push(ressource1);
 
 app.setIo = function(io) {
   console.log('set.io running');
   io.on('connection', function(socket){
     gameState.players += 1;
     io.emit('game state change', gameState);
-    
+
     socket.on("new user", function(userInfo){
       console.log("user info: ", userInfo);
       gameState.playerMap.push(userInfo);
