@@ -1,6 +1,11 @@
 var socket = io();
 var game = {};
-var gameState = {players: 1, game:true};
+var gameState = {
+  players: 1,
+  playerMap: [],
+  ressources: [],
+  game:true
+};
 
 var player;
 const max_x = 800;
@@ -16,10 +21,6 @@ socket.on('game state change', function (newGameState) {
   gameState = newGameState;
   console.log(gameState);
 });
-socket.on('end of game', function (newGameState) {
-  gameState.game = false;
-  game.destroy()
-});
 
 function preload () {
   game.load.spritesheet('ressources', 'images/ressources.png', 32, 32);
@@ -28,7 +29,7 @@ function preload () {
 }
 
 function create (){
-
+  console.log(gameState)
   placeWalls(game);
   placeRessources(game);
 
@@ -46,6 +47,10 @@ function create (){
 }
 
 function update () {
+  if(gameState.game == false){
+    game.destroy();
+  };
+
   text.text = "Players : " + gameState.players;
   moveCharacter();
 
