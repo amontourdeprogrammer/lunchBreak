@@ -51,12 +51,14 @@ var gameState = {
   ressources: []
 };
 
-var ressource1 = {
-  x: Math.floor(Math.random() * 24),
-  y: Math.floor(Math.random() * 18),
-  frame: Math.floor(Math.random() * 15)
-};
-gameState.ressources.push(ressource1);
+for (var i = 0; i < 16; i++) {
+  var ressource = {
+    x: Math.floor(Math.random() * 24),
+    y: Math.floor(Math.random() * 18),
+    frame: i
+  }
+  gameState.ressources.push(ressource);
+}
 
 app.setIo = function(io) {
   console.log('set.io running');
