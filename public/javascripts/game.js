@@ -19,6 +19,7 @@ socket.on('game state change', function (newGameState) {
 function preload () {
   game.load.spritesheet('ressources', 'images/ressources.png', 32, 32);
   game.load.image('tiles', '/images/tile.png');
+  game.load.image('player', '/images/logo.png');
 }
 
 function create (){
