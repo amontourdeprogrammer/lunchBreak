@@ -8,6 +8,7 @@ var gameState = {
 };
 
 var player;
+var userID;
 const max_x = 800;
 const max_y = 600;
 
@@ -26,10 +27,11 @@ function preload () {
   game.load.spritesheet('ressources', 'images/ressources.png', 32, 32);
   game.load.image('tiles', '/images/tile.png');
   game.load.image('player', '/images/logo.png');
+  game.load.image('monster', '/images/monster.jpg');
 }
 
 function create (){
-  console.log(gameState)
+
   placeWalls(game);
   placeRessources(game);
 
@@ -38,11 +40,12 @@ function create (){
 
   cursors = game.input.keyboard.createCursorKeys();
   endGame = game.input.keyboard.addKeys( { 'end': Phaser.KeyCode.T} );
-  console.log(endGame)
+
   var x = Math.floor(Math.random() * (max_x-100)) + 50;
   var y = Math.floor(Math.random() * (max_y-100)) + 50;
+  
   placeCharacter(x,y);
-  userID = Math.random() * 1000;
+  userID = Math.floor(Math.random());
   socket.emit("new user",{userObj:userID, xObj:x, yObj:y});
 }
 
@@ -53,6 +56,7 @@ function update () {
 
   text.text = "Players : " + gameState.players;
   moveCharacter();
+  placeCharacters()
 
   if (endGame.end.isDown){
     socket.emit("Client : end the game", 0);
@@ -88,6 +92,14 @@ function moveCharacter() {
   {
     player.body.velocity.y = 200;
   }
+}
+
+function placeCharacters(){
+  listOfCharac = {hello:[334, 267]}
+  listxy = listOfCharac.hello
+  monster = game.add.sprite(listxy[0], listxy[1], 'monster');
+  monster.anchor.setTo(0.5, 0.5);
+  monster.scale.setTo(0.2, 0.2);
 }
 
 function placeWalls(game) {
