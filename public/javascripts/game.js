@@ -2,7 +2,7 @@ var socket = io();
 var game = {};
 var gameState = {
   players: 1,
-  playerMap: [],
+  playerMap: {},
   ressources: [],
   game:true
 };
@@ -27,7 +27,7 @@ function preload () {
   game.load.spritesheet('ressources', 'images/ressources.png', 32, 32);
   game.load.image('tiles', '/images/tile.png');
   game.load.image('player', '/images/logo.png');
-  game.load.image('monster', '/images/monster.jpg');
+  game.load.image('monster', '/images/monster.png');
 }
 
 function create (){
@@ -45,8 +45,11 @@ function create (){
   var y = Math.floor(Math.random() * (max_y-100)) + 50;
   
   placeCharacter(x,y);
-  userID = Math.floor(Math.random());
-  socket.emit("new user",{userObj:userID, xObj:x, yObj:y});
+  placeMonsters()
+  userID = Math.floor(Math.random()*1000);
+  userInfo = [userID, [x, y]]
+  socket.emit("new user", userInfo);
+  console.log(userInfo)
 }
 
 function update () {
@@ -56,7 +59,7 @@ function update () {
 
   text.text = "Players : " + gameState.players;
   moveCharacter();
-  placeMonsters()
+  
 
   if (endGame.end.isDown){
     socket.emit("Client : end the game", 0);
@@ -108,11 +111,9 @@ function moveCharacter() {
 }
  
 
-
-
-
 function placeMonsters(){
-  listOfCharac = {hello:[334, 267], hello2:[434, 367]}
+  listOfCharac = gameState.playerMap
+  console.log("list of listOfCharac : ", listOfCharac)
   for(i in listOfCharac){
     console.log(listOfCharac[i])
     listxy = listOfCharac[i]

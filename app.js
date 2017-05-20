@@ -46,7 +46,7 @@ app.use(function(err, req, res, next) {
 
 var gameState = {
   players: 0,
-  playerMap: [],
+  playerMap: {},
   ressources: [],
   game : true
 };
@@ -68,7 +68,7 @@ app.setIo = function(io) {
     console.log("game state player" + JSON.stringify(gameState));
     socket.on("new user", function(userInfo){
       console.log("user info: ", userInfo);
-      gameState.playerMap.push(userInfo);
+      gameState.playerMap[userInfo[0]] = userInfo[1];
       console.log(gameState.playerMap);
     });
 
