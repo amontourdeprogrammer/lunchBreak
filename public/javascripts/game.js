@@ -21,6 +21,7 @@ window.onload = function() {
 socket.on('game state change', function (newGameState) {
   gameState = newGameState;
   console.log(gameState);
+  placeMonsters()
 });
 
 function preload () {
