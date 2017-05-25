@@ -21,7 +21,8 @@ window.onload = function() {
 socket.on('game state change', function (newGameState) {
   gameState = newGameState;
   console.log(gameState);
-  placeMonsters()
+  MonsterRollCall()
+  console.log(playerMapClient);
 });
 
 function preload () {
@@ -38,7 +39,7 @@ function create (){
 
   game.stage.backgroundColor = '#D1EDEC';
   text = game.add.text(64, 362, "no user" , 16);
-
+  othertext = game.add.text(64, 400, "no user" , 16);
   cursors = game.input.keyboard.createCursorKeys();
   endGame = game.input.keyboard.addKeys( { 'end': Phaser.KeyCode.T} );
 
@@ -46,11 +47,11 @@ function create (){
   var y = Math.floor(Math.random() * (max_y-100)) + 50;
   
   placeCharacter(x,y);
-  placeMonsters()
+
   userID = Math.floor(Math.random()*1000);
   userInfo = [userID, [x, y]]
   socket.emit("new user", userInfo);
-  console.log(userInfo)
+  MonsterRollCall()
 }
 
 function update () {
@@ -59,7 +60,11 @@ function update () {
   };
 
   text.text = "Players : " + gameState.players;
+  othertext.text = "this Players : " + userID;
   moveCharacter();
+  for(i in playerMapClient){
+    playerMapClient[i].update()
+  }
   
 
   if (endGame.end.isDown){
@@ -76,12 +81,15 @@ function placeCharacter(x, y) {
 }
 
 function moveCharacter() {
+  userInfo = [userID, [player.body.x, player.body.y]]
+  
   player.body.velocity.x = 0;
   player.body.velocity.y = 0;
 
   if (cursors.left.isDown) { 
     if (player.body.x > 0) {
       player.body.velocity.x = -200;
+      socket.emit("new user", userInfo);
     } else {
       player.body.velocity.x = 0;
     }
@@ -89,6 +97,7 @@ function moveCharacter() {
   else if (cursors.right.isDown) {
     if (player.body.x < max_x-80) {
       player.body.velocity.x = 200;
+      socket.emit("new user", userInfo);
     } else {
       player.body.velocity.x = 0;
     }
@@ -97,6 +106,7 @@ function moveCharacter() {
   if (cursors.up.isDown) {
     if (player.body.y > 0){ 
       player.body.velocity.y = -200;
+      socket.emit("new user", userInfo);
     } else {
       player.body.velocity.y = 0;
     }
@@ -104,26 +114,42 @@ function moveCharacter() {
   else if (cursors.down.isDown) {
     if (player.body.y < max_y-80){
       player.body.velocity.y = 200;
+      socket.emit("new user", userInfo);
     } else {
       player.body.velocity.y = 0;
     }
   }
 
 }
- 
 
-function placeMonsters(){
-  listOfCharac = gameState.playerMap
-  console.log("list of listOfCharac : ", listOfCharac)
-  for(i in listOfCharac){
-    console.log(listOfCharac[i])
-    listxy = listOfCharac[i]
-    monster = game.add.sprite(listxy[0], listxy[1], 'monster');
-    monster.anchor.setTo(0.5, 0.5);
-    monster.scale.setTo(0.2, 0.2);
+
+MonsterPlayer = function (userID, x ,y) {
+  this.monster = game.add.sprite(x ,y, 'monster');
+  console.log("adding new monster sprite")
+  game.physics.arcade.enable(this.monster)
+  this.monster.name = userID;
+  this.monster.anchor.set(0.5);
+  this.monster.scale.setTo(0.2, 0.2);
+};
+
+MonsterPlayer.prototype.update = function() {
+  this.monster.body.x = gameState.playerMap[this.monster.name][0]
+  this.monster.body.y = gameState.playerMap[this.monster.name][1]
+}
+
+function MonsterRollCall(){
+  playerList = gameState.playerMap
+  for(i in playerList){
+    if (i != userID){
+      console.log("adding new monster")
+      if (i in playerMapClient){
+      playerMapClient[i].monster.x =  playerList[i][0]
+      playerMapClient[i].monster.x =  playerList[i][1]
+    }else{
+      playerMapClient[i] = new MonsterPlayer(i, playerList[i][0],playerList[i][1] )
+    }
+    }
   }
-  
-  
 }
 
 function placeWalls(game) {
@@ -165,4 +191,7 @@ function placeRessources(game) {
   });
 }
 
+//todo
+// update : user id not displaying properly
+//monsters do not show up anymore
 

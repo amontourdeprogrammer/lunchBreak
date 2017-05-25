@@ -51,6 +51,8 @@ var gameState = {
   game : true
 };
 
+var playerSockets={};
+
 for (var i = 0; i < 16; i++) {
   var ressource = {
     x: Math.floor(Math.random() * 24),
@@ -65,24 +67,27 @@ app.setIo = function(io) {
   io.on('connection', function(socket){
     gameState.players += 1;
     io.emit('game state change', gameState);
-    console.log("game state player" + JSON.stringify(gameState));
+
     socket.on("new user", function(userInfo){
       console.log("user info: ", userInfo);
       gameState.playerMap[userInfo[0]] = userInfo[1];
-      console.log(gameState.playerMap);
+      io.emit('game state change', gameState);
     });
 
     socket.on("Client : end the game", function(content){
-
       endOfGame(io)
     });
 
     socket.on('disconnect', function(socket){
       gameState.players -= 1;
+      console.log("before deleting : ", playerSockets)
+      delete playerSockets[socket]
+      console.log("after deleting : ", playerSockets)
       io.emit('game state change', gameState);
+
       if (gameState.players == 0){
           gameState.game = true;
-          console.log("game state at true")
+          gameState.playerMap = {};
       };
     });
   });
@@ -94,4 +99,5 @@ function endOfGame(io){
     gameState.game = false
     io.emit('game state change', gameState)
     gameState.game = true
+    gameState.playerMap = {};
 }
