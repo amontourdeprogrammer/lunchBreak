@@ -51,7 +51,7 @@ var gameState = {
   game : true
 };
 
-var playerSockets={};
+var playerSockets= [];
 
 for (var i = 0; i < 16; i++) {
   var ressource = {
@@ -69,9 +69,18 @@ app.setIo = function(io) {
     io.emit('game state change', gameState);
 
     socket.on("new user", function(userInfo){
-      console.log("user info: ", userInfo);
+      //console.log("user info: ", userInfo);
+      if (userInfo[0] in gameState.playerMap){
+        console.log('yep');
+      }else{
+        console.log("new player")
+        console.log("player map is", gameState.playerMap)
+        playerSockets.push([userInfo[0], socket])
+      }
       gameState.playerMap[userInfo[0]] = userInfo[1];
       io.emit('game state change', gameState);
+      console.log(gameState.playerMap)
+
     });
 
     socket.on("Client : end the game", function(content){
@@ -81,7 +90,12 @@ app.setIo = function(io) {
     socket.on('disconnect', function(socket){
       gameState.players -= 1;
       console.log("before deleting : ", playerSockets)
-      delete playerSockets[socket]
+      for (i in range(playerSockets.length)-1){
+        if (playerSockets[i][1] == socket){
+            delete gameState.playerMap[playerSockets[i][0]]
+            playerSockets.splice(i,1)
+        }
+      }
       console.log("after deleting : ", playerSockets)
       io.emit('game state change', gameState);
 

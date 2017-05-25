@@ -12,7 +12,7 @@ var userID;
 const max_x = 800;
 const max_y = 600;
 
-var playerMapClient = {};
+var monsterMap = {};
 
 window.onload = function() {
   game = new Phaser.Game(max_x, max_y, Phaser.AUTO, '', { preload: preload, create: create, update: update });
@@ -20,9 +20,10 @@ window.onload = function() {
 
 socket.on('game state change', function (newGameState) {
   gameState = newGameState;
-  console.log(gameState);
+  //console.log(gameState);
   MonsterRollCall()
-  console.log(playerMapClient);
+  //console.log('this is player map client');
+  //console.log(monsterMap);
 });
 
 function preload () {
@@ -62,8 +63,8 @@ function update () {
   text.text = "Players : " + gameState.players;
   othertext.text = "this Players : " + userID;
   moveCharacter();
-  for(i in playerMapClient){
-    playerMapClient[i].update()
+  for(i in monsterMap){
+    monsterMap[i].update()
   }
   
 
@@ -137,20 +138,33 @@ MonsterPlayer.prototype.update = function() {
   this.monster.body.y = gameState.playerMap[this.monster.name][1]
 }
 
+function destroyMonster (monster) {
+    monster.destroy();
+}
+
 function MonsterRollCall(){
   playerList = gameState.playerMap
-  for(i in playerList){
-    if (i != userID){
-      console.log("adding new monster")
-      if (i in playerMapClient){
-      playerMapClient[i].monster.x =  playerList[i][0]
-      playerMapClient[i].monster.x =  playerList[i][1]
-    }else{
-      playerMapClient[i] = new MonsterPlayer(i, playerList[i][0],playerList[i][1] )
+  for(foe in playerList){
+    if (foe in monsterMap){
+      monsterMap[foe].monster.x =  playerList[foe][0]
+      monsterMap[foe].monster.x =  playerList[foe][1]
     }
+    else if (foe == userID){ continue; } 
+    else {
+    console.log("adding new monster number ", foe)
+    monsterMap[foe] = new MonsterPlayer(foe, playerList[foe][0],playerList[foe][1] )
+    }
+  }
+  for(foe in monsterMap){
+    if (foe in playerList){
+      continue;
+    }else{
+      monsterMap[foe].destroy()
+      console.log("monster destroyed : ", foe)
     }
   }
 }
+
 
 function placeWalls(game) {
   wallsMap = game.add.tilemap();
