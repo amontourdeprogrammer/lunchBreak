@@ -32,6 +32,7 @@ socket.on('game state change', function (newGameState) {
 
 function create (){
   placeWalls(game);
+  console.log(gameState)
   placeRessources(game);
 
   game.stage.backgroundColor = '#D1EDEC';
