@@ -44,7 +44,6 @@ function create (){
   var y = Math.floor(Math.random() * (max_y-100)) + 50;
   
   placeCharacter(x,y);
-
   userID = Math.floor(Math.random()*1000);
   userInfo = [userID, [x, y]]
   socket.emit("new user", userInfo);
@@ -52,7 +51,7 @@ function create (){
 }
 
 function update () {
-  placeRessources(game);
+  updateRessources();
   if(gameState.game == false){
     game.destroy();
   };
@@ -189,9 +188,9 @@ function placeWall(x, y, direction, tileLength, layer) {
 function placeRessources(game) {
   ressourcesMap = game.add.tilemap();
   ressourcesMap.addTilesetImage('ressources');
-
   ressourcesLayer = ressourcesMap.create('space_backgrounds', 40, 30, 32, 32);
-
+}
+function updateRessources(){
   gameState.ressources.forEach(function (ressource) {
     ressourcesMap.putTile(ressource.frame, ressource.x ,ressource.y, ressourcesLayer);
 
