@@ -18,23 +18,19 @@ window.onload = function() {
   game = new Phaser.Game(max_x, max_y, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 };
 
-socket.on('game state change', function (newGameState) {
-  gameState = newGameState;
-  //console.log(gameState);
-  MonsterRollCall()
-  //console.log('this is player map client');
-  //console.log(monsterMap);
-});
 
 function preload () {
   game.load.spritesheet('ressources', 'images/ressources.png', 32, 32);
   game.load.image('tiles', '/images/tile.png');
   game.load.image('player', '/images/logo.png');
-  game.load.image('monster', '/images/monster.png');
+  game.load.image('monster', '/images/monster.png', 100, 100);
 }
 
-function create (){
+socket.on('game state change', function (newGameState) {
+  gameState = newGameState;
+});
 
+function create (){
   placeWalls(game);
   placeRessources(game);
 
@@ -63,11 +59,10 @@ function update () {
   text.text = "Players : " + gameState.players;
   othertext.text = "this Players : " + userID;
   moveCharacter();
+  MonsterRollCall()
   for(i in monsterMap){
     monsterMap[i].update()
   }
-  
-
   if (endGame.end.isDown){
     socket.emit("Client : end the game", 0);
   }
@@ -123,14 +118,13 @@ function moveCharacter() {
 
 }
 
-
 MonsterPlayer = function (userID, x ,y) {
-  this.monster = game.add.sprite(x ,y, 'monster');
-  console.log("adding new monster sprite")
+  image = game.cache.getKeys(Phaser.Cache.IMAGE);
+  this.monster = game.add.sprite(x ,y, image[3]);
   game.physics.arcade.enable(this.monster)
   this.monster.name = userID;
   this.monster.anchor.set(0.5);
-  this.monster.scale.setTo(0.2, 0.2);
+  this.monster.scale.setTo(0.8, 0.8);
 };
 
 MonsterPlayer.prototype.update = function() {
@@ -138,20 +132,18 @@ MonsterPlayer.prototype.update = function() {
   this.monster.body.y = gameState.playerMap[this.monster.name][1]
 }
 
-function destroyMonster (monster) {
-    monster.destroy();
+function destroyMonster() {
+    this.monster.destroy();
 }
 
 function MonsterRollCall(){
   playerList = gameState.playerMap
   for(foe in playerList){
     if (foe in monsterMap){
-      monsterMap[foe].monster.x =  playerList[foe][0]
-      monsterMap[foe].monster.x =  playerList[foe][1]
+      
     }
     else if (foe == userID){ continue; } 
     else {
-    console.log("adding new monster number ", foe)
     monsterMap[foe] = new MonsterPlayer(foe, playerList[foe][0],playerList[foe][1] )
     }
   }
@@ -159,8 +151,9 @@ function MonsterRollCall(){
     if (foe in playerList){
       continue;
     }else{
-      monsterMap[foe].destroy()
-      console.log("monster destroyed : ", foe)
+      monsterMap[foe].monster.destroy() ;
+      delete monsterMap[foe]
+
     }
   }
 }

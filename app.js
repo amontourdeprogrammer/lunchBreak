@@ -63,23 +63,20 @@ for (var i = 0; i < 16; i++) {
 }
 
 app.setIo = function(io) {
-  console.log('set.io running');
   io.on('connection', function(socket){
     gameState.players += 1;
     io.emit('game state change', gameState);
 
     socket.on("new user", function(userInfo){
-      //console.log("user info: ", userInfo);
+      user_id = userInfo[0]
+      user_coordinates = userInfo[1]
       if (userInfo[0] in gameState.playerMap){
-        console.log('yep');
+        
       }else{
-        console.log("new player")
-        console.log("player map is", gameState.playerMap)
-        playerSockets.push([userInfo[0], socket])
+        playerSockets.push([user_id, socket.id ])
       }
-      gameState.playerMap[userInfo[0]] = userInfo[1];
+      gameState.playerMap[user_id] = user_coordinates;
       io.emit('game state change', gameState);
-      console.log(gameState.playerMap)
 
     });
 
@@ -87,16 +84,14 @@ app.setIo = function(io) {
       endOfGame(io)
     });
 
-    socket.on('disconnect', function(socket){
+    socket.on('disconnect', function(){
       gameState.players -= 1;
-      console.log("before deleting : ", playerSockets)
-      for (i in range(playerSockets.length)-1){
-        if (playerSockets[i][1] == socket){
+      for (var i = 0 ; i < playerSockets.length; i++){
+        if (playerSockets[i][1] == socket.id){
             delete gameState.playerMap[playerSockets[i][0]]
             playerSockets.splice(i,1)
         }
       }
-      console.log("after deleting : ", playerSockets)
       io.emit('game state change', gameState);
 
       if (gameState.players == 0){
