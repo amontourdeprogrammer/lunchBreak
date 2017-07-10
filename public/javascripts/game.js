@@ -119,8 +119,7 @@ function moveCharacter() {
 }
 
 MonsterPlayer = function (userID, x ,y) {
-  image = game.cache.getKeys(Phaser.Cache.IMAGE);
-  this.monster = game.add.sprite(x ,y, image[3]);
+  this.monster = game.add.sprite(x ,y, 'monster');
   game.physics.arcade.enable(this.monster)
   this.monster.name = userID;
   this.monster.anchor.set(0.5);
