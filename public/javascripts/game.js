@@ -32,7 +32,6 @@ socket.on('game state change', function (newGameState) {
 
 function create (){
   placeWalls(game);
-  console.log(gameState)
   placeRessources(game);
 
   game.stage.backgroundColor = '#D1EDEC';
@@ -53,6 +52,7 @@ function create (){
 }
 
 function update () {
+  placeRessources(game);
   if(gameState.game == false){
     game.destroy();
   };
@@ -198,7 +198,4 @@ function placeRessources(game) {
   });
 }
 
-//todo
-// update : user id not displaying properly
-//monsters do not show up anymore
 
