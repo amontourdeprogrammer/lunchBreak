@@ -51,8 +51,8 @@ var gameState = {
 };
 
 var playerSockets= [];
-
-for (var i = 0; i < 16; i++) {
+var howManyRessources = 16
+for (var i = 0; i < howManyRessources; i++) {
   var ressource = {
     x: Math.floor(Math.random() * 725 + 25),
     y: Math.floor(Math.random() * 550 + 25),
@@ -60,6 +60,8 @@ for (var i = 0; i < 16; i++) {
   }
   gameState.ressources.push(ressource);
 }
+
+var howManyRessourcesLeft = howManyRessources
 
 app.setIo = function(io) {
   io.on('connection', function(socket){
@@ -80,6 +82,10 @@ app.setIo = function(io) {
     });
 
     socket.on("collectedFromClient", function(hashIndex){
+      howManyRessourcesLeft -= 1
+      if (howManyRessourcesLeft < 1){
+        endOfGame(io)
+      }
      io.emit("collectedFromServer", hashIndex);
     });
 
@@ -99,6 +105,7 @@ app.setIo = function(io) {
       if (gameState.players == 0){
           gameState.game = true;
           gameState.playerMap = {};
+          howManyRessourcesLeft = howManyRessources
       };
     });
   });
@@ -109,6 +116,5 @@ module.exports = app;
 function endOfGame(io){
     gameState.game = false
     io.emit('game state change', gameState)
-    gameState.game = true
     gameState.playerMap = {};
 }

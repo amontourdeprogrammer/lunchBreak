@@ -34,6 +34,8 @@ function preload () {
 
 socket.on('game state change', function (newGameState) {
   gameState = newGameState;
+  if(gameState.game == false){
+  }; 
 });
 
 socket.on('collectedFromServer', function (hashIndex) {
@@ -51,6 +53,7 @@ function create (){
   playerText = game.add.text(64, 362, "no user" , 16);
   othertext = game.add.text(64, 400, "no user" , 16);
   scoreText = game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
+  stateText = game.add.text(100, 200, '', { fontSize: '64px', fill: '#000' });
   cursors = game.input.keyboard.createCursorKeys();
   endGame = game.input.keyboard.addKeys( { 'end': Phaser.KeyCode.T} );
 
@@ -66,9 +69,9 @@ function create (){
 }
 
 function update () {
-
   if(gameState.game == false){
-    game.destroy();
+    player.kill();
+    stateText.text = "GAME OVER"
   };
 
   ressourcesGroup.hash.forEach(function(res) {
@@ -221,7 +224,6 @@ function placeRessources(game) {
 function collectRessource(player, ressource) {
   ressource.kill();
   socket.emit("collectedFromClient", ressourcesGroup.hash.indexOf(ressource));
-  console.log(ressourcesGroup.hash.indexOf(ressource))
   score += 10;
   scoreText.text = 'Score: ' + score;
 }
