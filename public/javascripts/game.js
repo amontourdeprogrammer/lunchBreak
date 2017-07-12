@@ -11,6 +11,11 @@ var player;
 var userID;
 const max_x = 800;
 const max_y = 600;
+var playerText;
+
+var ressourcesGroup;
+var score = 0;
+var scoreText;
 
 var monsterMap = {};
 
@@ -22,6 +27,7 @@ window.onload = function() {
 function preload () {
   game.load.spritesheet('ressources', 'images/ressources.png', 32, 32);
   game.load.image('tiles', '/images/tile.png');
+  game.load.image('star', '/images/star.png');
   game.load.image('player', '/images/logo.png');
   game.load.image('monster', '/images/monster.png', 100, 100);
 }
@@ -31,12 +37,15 @@ socket.on('game state change', function (newGameState) {
 });
 
 function create (){
+  game.physics.startSystem(Phaser.Physics.ARCADE);
+
   placeWalls(game);
   placeRessources(game);
 
   game.stage.backgroundColor = '#d9f0f0';
-  text = game.add.text(64, 362, "no user" , 16);
+  playerText = game.add.text(64, 362, "no user" , 16);
   othertext = game.add.text(64, 400, "no user" , 16);
+  scoreText = game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
   cursors = game.input.keyboard.createCursorKeys();
   endGame = game.input.keyboard.addKeys( { 'end': Phaser.KeyCode.T} );
 
@@ -49,14 +58,20 @@ function create (){
   userInfo = [userID, [x, y]]
   socket.emit("new user", userInfo);
   MonsterRollCall()
+
 }
 
 function update () {
+
   if(gameState.game == false){
     game.destroy();
   };
 
-  text.text = "Players : " + gameState.players;
+  ressourcesGroup.hash.forEach(function(res) {
+    game.physics.arcade.overlap(player, res, collectRessource, null, this);
+  });
+
+  playerText.text = "Players : " + gameState.players;
   othertext.text = "this Players : " + userID;
   moveCharacter();
   MonsterRollCall()
@@ -73,7 +88,7 @@ function placeCharacter(x, y) {
   player.anchor.setTo(0.5, 0.5);
   player.scale.setTo(0.2, 0.2);
 
-  game.physics.arcade.enable(player);
+  game.physics.enable(player, Phaser.Physics.ARCADE);
 }
 
 function moveCharacter() {
@@ -120,7 +135,9 @@ function moveCharacter() {
 
 MonsterPlayer = function (userID, x ,y) {
   this.monster = game.add.sprite(x ,y, 'monster');
-  game.physics.arcade.enable(this.monster)
+
+  game.physics.enable(this.monster, Phaser.Physics.ARCADE);
+
   this.monster.name = userID;
   this.monster.anchor.set(0.5);
   this.monster.scale.setTo(0.8, 0.8);
@@ -186,18 +203,20 @@ function placeWall(x, y, direction, tileLength, layer) {
 }
 
 function placeRessources(game) {
-  ressourcesMap = game.add.tilemap();
-  ressourcesMap.addTilesetImage('ressources');
+  ressourcesGroup = game.add.group();
 
-  ressourcesLayer = ressourcesMap.create('space_backgrounds', 40, 30, 32, 32);
+  ressourcesGroup.enableBody = true;
+  //ressourcesGroup.physicsBodyType = Phaser.physics.ARCADE;
 
-  gameState.ressources.forEach(function (ressource) {
-    ressourcesMap.putTile(ressource.frame, ressource.x ,ressource.y, ressourcesLayer);
-
+  gameState.ressources.forEach(function (gsRessource) {
+    var ressource = ressourcesGroup.create(gsRessource.x, gsRessource.y, 'star');
   });
 }
 
-//todo
-// update : user id not displaying properly
-//monsters do not show up anymore
+function collectRessource (player, ressource) {
+  ressource.kill();
+
+  score += 10;
+  scoreText.text = 'Score: ' + score;
+}
 

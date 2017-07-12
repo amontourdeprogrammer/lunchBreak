@@ -55,8 +55,8 @@ var playerSockets= [];
 
 for (var i = 0; i < 16; i++) {
   var ressource = {
-    x: Math.floor(Math.random() * 24),
-    y: Math.floor(Math.random() * 18),
+    x: Math.floor(Math.random() * 725 + 25),
+    y: Math.floor(Math.random() * 550 + 25),
     frame: i
   }
   gameState.ressources.push(ressource);
