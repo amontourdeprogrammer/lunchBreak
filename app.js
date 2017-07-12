@@ -21,7 +21,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
 app.use('/', index);
 app.use('/users', users);
 
@@ -80,6 +79,10 @@ app.setIo = function(io) {
 
     });
 
+    socket.on("collectedFromClient", function(hashIndex){
+     io.emit("collectedFromServer", hashIndex);
+    });
+
     socket.on("Client : end the game", function(content){
       endOfGame(io)
     });
@@ -93,7 +96,6 @@ app.setIo = function(io) {
         }
       }
       io.emit('game state change', gameState);
-
       if (gameState.players == 0){
           gameState.game = true;
           gameState.playerMap = {};

@@ -36,6 +36,11 @@ socket.on('game state change', function (newGameState) {
   gameState = newGameState;
 });
 
+socket.on('collectedFromServer', function (hashIndex) {
+  ressourcesGroup.hash[hashIndex].kill()
+});
+
+
 function create (){
   game.physics.startSystem(Phaser.Physics.ARCADE);
 
@@ -215,7 +220,7 @@ function placeRessources(game) {
 
 function collectRessource(player, ressource) {
   ressource.kill();
-  //socket.emit("collected", userInfo);
+  socket.emit("collectedFromClient", ressourcesGroup.hash.indexOf(ressource));
   console.log(ressourcesGroup.hash.indexOf(ressource))
   score += 10;
   scoreText.text = 'Score: ' + score;
