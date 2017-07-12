@@ -34,8 +34,6 @@ function preload () {
 
 socket.on('game state change', function (newGameState) {
   gameState = newGameState;
-  if(gameState.game == false){
-  }; 
 });
 
 socket.on('collectedFromServer', function (hashIndex) {
@@ -72,6 +70,7 @@ function update () {
   if(gameState.game == false){
     player.kill();
     stateText.text = "GAME OVER"
+    socket.emit("gameOver", true);
   };
 
   ressourcesGroup.hash.forEach(function(res) {

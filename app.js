@@ -92,6 +92,10 @@ app.setIo = function(io) {
     socket.on("Client : end the game", function(content){
       endOfGame(io)
     });
+    socket.on("gameOver", function(content){
+      gameState.game = true;
+      howManyRessourcesLeft = howManyRessources
+    });
 
     socket.on('disconnect', function(){
       gameState.players -= 1;
@@ -114,7 +118,7 @@ app.setIo = function(io) {
 module.exports = app;
 
 function endOfGame(io){
-    gameState.game = false
+    gameState.game = false;
     io.emit('game state change', gameState)
     gameState.playerMap = {};
 }
