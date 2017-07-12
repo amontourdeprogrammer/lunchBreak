@@ -34,7 +34,7 @@ function create (){
   placeWalls(game);
   placeRessources(game);
 
-  game.stage.backgroundColor = '#D1EDEC';
+  game.stage.backgroundColor = '#d9f0f0';
   text = game.add.text(64, 362, "no user" , 16);
   othertext = game.add.text(64, 400, "no user" , 16);
   cursors = game.input.keyboard.createCursorKeys();
