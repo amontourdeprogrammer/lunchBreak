@@ -213,9 +213,10 @@ function placeRessources(game) {
 }
 
 
-function collectRessource (player, ressource) {
+function collectRessource(player, ressource) {
   ressource.kill();
-
+  //socket.emit("collected", userInfo);
+  console.log(ressourcesGroup.hash.indexOf(ressource))
   score += 10;
   scoreText.text = 'Score: ' + score;
 }
