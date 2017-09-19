@@ -57,7 +57,7 @@ function create (){
 
   var x = Math.floor(Math.random() * (max_x-100)) + 50;
   var y = Math.floor(Math.random() * (max_y-100)) + 50;
-  
+
   placeCharacter(x,y);
   userID = Math.floor(Math.random()*1000);
   userInfo = [userID, [x, y]]
@@ -99,11 +99,11 @@ function placeCharacter(x, y) {
 
 function moveCharacter() {
   userInfo = [userID, [player.body.x, player.body.y]]
-  
+
   player.body.velocity.x = 0;
   player.body.velocity.y = 0;
 
-  if (cursors.left.isDown) { 
+  if (cursors.left.isDown) {
     if (player.body.x > 0) {
       player.body.velocity.x = -200;
       socket.emit("new user", userInfo);
@@ -121,7 +121,7 @@ function moveCharacter() {
   }
 
   if (cursors.up.isDown) {
-    if (player.body.y > 0){ 
+    if (player.body.y > 0){
       player.body.velocity.y = -200;
       socket.emit("new user", userInfo);
     } else {
@@ -162,9 +162,9 @@ function MonsterRollCall(){
   playerList = gameState.playerMap
   for(foe in playerList){
     if (foe in monsterMap){
-      
+
     }
-    else if (foe == userID){ continue; } 
+    else if (foe == userID){ continue; }
     else {
     monsterMap[foe] = new MonsterPlayer(foe, playerList[foe][0],playerList[foe][1] )
     }
@@ -225,5 +225,9 @@ function collectRessource(player, ressource) {
   socket.emit("collectedFromClient", ressourcesGroup.hash.indexOf(ressource));
   score += 10;
   scoreText.text = 'Score: ' + score;
+}
+
+function whichTile(coordinates) {
+  return [xTile, yTile]
 }
 
