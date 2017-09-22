@@ -20,5 +20,6 @@ describe('Check if a set of coordinates are on the right tile', function() {
     var yTile = 16;
     assert.equal(game.
       whichTile([x,y]), [xTile, yTile]);
+    //
   });
 });
