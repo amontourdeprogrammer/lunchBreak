@@ -1,3 +1,5 @@
+var wallTiles = [];
+
 function placeWalls(game) {
   wallsMap = game.add.tilemap();
   wallsMap.addTilesetImage('tiles');
@@ -17,10 +19,22 @@ function placeWall(x, y, direction, tileLength, layer) {
   if(direction==='vertical') {
     for(i=0; i<tileLength; i++) {
       wallsMap.putTile(0, x, y + i, layer);
+      wallTiles.push([x, y+i]);
+
     }
   } else if(direction==='horizontal') {
     for(i=0; i<tileLength; i++) {
       wallsMap.putTile(0, x + i, y, layer);
+      wallTiles.push([x + i, y]);
     }
   }
 }
+
+function isThisTileAWall(tileCoordinates, wallTiles){
+    function matchCoordinates(element, index, array) {
+      return element[0] == tileCoordinates[0] && element[1] == tileCoordinates[1];
+    }
+    return wallTiles.some(matchCoordinates);
+}
+
+module.exports = { isThisTileAWall };
